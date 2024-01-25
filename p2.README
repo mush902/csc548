@@ -1,3 +1,7 @@
+//Group info:
+//mshaikh2 Mushtaq Ahmed Shaikh
+//ahgada Amay Gada
+
 How to run the program
 
 1. There are two code file p2_mpi.c and p2_fun.c. p2_mpi.c contains the source code which computes the derivative of a function fn. p2_func.c contains the function which is cos(x) in this case. 
