@@ -1,3 +1,6 @@
+#Single Author info:
+#mshaikh2 Mushtaq Ahmed Shaikh
+
 CC=mpicc
 
 p1make: p1.o
