@@ -1,0 +1,49 @@
+How to run the program
+
+1. There are two code file p2_mpi.c and p2_fun.c. p2_mpi.c contains the source code which computes the derivative of a function fn. p2_func.c contains the function which is cos(x) in this case. 
+
+2. There is p2.Make file which contains the make script. 
+
+3. Launch the number of nodes and ranks suitably using below command. 
+
+  salloc -N1 -n4 -p broadwell
+
+4. Run the make file using below command which generetes p2_mpi binary
+
+  make -f p2.Makefile
+
+5. Execute the p2_mpi binary using below command. The binary takes 3 arguments in the following order. {number_of_gridpoints} {point-to-point_type} {gather_type}. The number of grid points can be varied in steps of 100 1000 and 10,000. 
+   {point-to-point_type} can take either of two inputs 0 or 1 where 0 stands for blocking MPI_Call and 1 stands for non blocking MPI_Call. 
+   {gather_type} can take either of two inputs 0 or 1 where 0 stands for MPI_Gather and 1 stands for manual gather. 
+
+  prun ./p2_mpi 100 0 0 
+
+6. After the run, the program generates data file in the format fn-{number_of_gridpoints}.dat. Use this file to generate the gnu plot using below command. You additionally need to load gnu package to execute gnuplot. See below commands. 
+
+  module load gnu9/9.4.0
+
+  gnuplot -e "filename='fn-{number_of_gridpoints}'" p2.gnu 
+
+  gnuplot -e "filename='fn-100'" p2.gnu
+
+7. The gnu plot generates the png image of the plotted derivative in the file name format fn-{number_of_gridpoints}.png. In above case it generates fn-100.png.
+
+8. To summarize all the commands in one go, check below example. 
+
+  salloc -N1 -n4 -p broadwell
+  make -f p2.Makefile
+  prun ./p2_mpi 100 0 0 
+  module load gnu9/9.4.0
+  gnuplot -e "filename='fn-100'" p2.gnu
+  exit
+
+Comment on Accuracy of the Gnuplot 
+
+1. As the number of gridpoints increases, the graph for the derivative of cos(x) becomes more accurate and the curves smoothen out. This is justified by the fact that the delta "dx" used to compute the derivate becomes smaller with increasing grid size. 
+
+  For instance, the delta dx corresponding to gridpoints is gridpoints={100, 1000, 10000} --> dx={1, 0.1, 0.01} when the intial and final values of the grid are XI = 1 and XF = 100. 
+  
+  
+
+  
+ 
