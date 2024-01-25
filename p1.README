@@ -1,3 +1,6 @@
+//Single Author info:
+//mshaikh2 Mushtaq Ahmed Shaikh
+
 How to run the program? 
 
 The program p1.c can be run after you launch the nodes using slurm allocater. You can use the allocator with commands as shown below. 
