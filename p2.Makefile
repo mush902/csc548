@@ -1,3 +1,6 @@
+#Group info:
+#mshaikh2 Mushtaq Ahmed Shaikh
+#ahgada Amay Gada
 CC = mpicc
 
 p2make: p2_mpi.o
