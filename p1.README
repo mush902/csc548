@@ -1,0 +1,92 @@
+How to run the program? 
+
+The program p1.c can be run after you launch the nodes using slurm allocater. You can use the allocator with commands as shown below. 
+
+1. One pair of nodes with 1 core each talking to each other, that is message passing should happen in two nodes.
+
+    salloc -N2 -n2 -p broadwell
+
+2. Run the make file using below command. This will generate p1 binary. 
+
+    make -f p1.Makefile
+
+3. Execute the p1 binary using below command. 
+    
+    prun ./p1
+
+4. Free the allocated nodes using below command. Then repeat the process for 4 cores, 6 cores and 8 cores.
+    
+    exit
+
+5. One pair of nodes with 2 cores each communicating in parallel,that is message passing should happen in four cores simultaneously (across nodes)
+    
+    salloc -N2 -n4 -p broadwell
+
+6. One pair of nodes with 4 cores each communicating in parallel, that is message passing should happen in six cores simultaneously (across nodes)
+    
+    salloc -N2 -n6 -p broadwell
+
+7. One pair of nodes with 4 cores each communicating in parallel, that is message passing should happen in eight cores simultaneously (2 pairs across nodes and 2 pairs within nodes)
+    
+    salloc -N2 -n8 -p broadwell
+
+8. In summary, if I list all the commands sequentially, it looks like below. 
+    
+    salloc -N2 -n2 -p broadwell
+    make -f p1.Makefile
+    prun ./p1
+    exit
+    salloc -N2 -n4 -p broadwell
+    prun ./p1
+    exit
+    salloc -N2 -n6 -p broadwell
+    prun ./p1
+    exit
+    salloc -N2 -n8 -p broadwell
+    prun ./p1
+    exit
+
+9. After you have run the program for all 4 scenarios of core allocation, you need to generate the statistics file and create box plot. You can do it by following below commands. 
+    
+    module load py3-numpy/1.19.5
+
+    module load py3-scipy/1.5.4
+
+    python3 -m venv csc548 && source csc548/bin/activate && pip install --upgrade pip && pip install matplotlib
+
+    python3 generate_stats.py
+
+    python3 plot.py
+
+10. It will generate "stats.txt" while is a list of list of dicts containing quartile values for each message size and each scenario of core allocation. 
+
+11. It will generate a "boxplot.png" image which displays the quartile boxplots for each message size and each scenario of core allocation. 
+
+
+Explanation of boxplots
+
+1. The boxplot plots quartile bars for each message size going from 32KB, 64KB all the way upto 2 MB. The x-axis contains message size. 
+
+2. There are 5 quartile bars for each message size. For each message size, the bars are arranged as described below. 
+
+    1. Bar 1 - 2 nodes with 2 cores 
+    2. Bar 2 - 2 nodes with 4 cores 
+    3. Bar 3 - 2 nodes with 6 cores 
+    4. Bar 4 - 2 nodes with 8 cores having inter communication between the nodes 
+    5. Bar 5 - 2 nodes with 8 cores having intra communication within the node
+
+3. With increase in the number of cores, from 2 cores till 6 cores, the latency increases for all message sizes. This is expected since more cores are communicating in parallel. 
+
+4. For the fourth scenario which has 8 cores where 2 pairs of cores are communicating in parallel and the other 2 cores are communicating within the node, the latency is relatively low for smaller message sizes. 
+
+    However, as the message size increase, starting from 256KB, the latency starts to increase relatively compared to other scenarios. 
+
+    The latency of intra communication is lower than inter communication because the messages are propagating within the same node. 
+
+    According to my knowledge, with increase in message size, the latency in scenario 4 increases and outgrows other scenarios for larger message size because the buffers are being shared between the cores. As a result there is more wait time to gain the buffer and then send the message. 
+
+    This is the odd point in the graph. In theory, scenario 2 where there are two pairs communicating in parallel matches with inter communication of scnerio 4, the latency is relatively much higher for larger message sizes.
+
+5. We can also observe that scenario 3 has the highest latency for any larger message size (starting from 128KB) which conforms to the fact that parallel communication accross nodes take more time. 
+
+
