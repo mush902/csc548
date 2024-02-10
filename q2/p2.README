@@ -1,0 +1,47 @@
+'''How to run the program
+
+1. Launch the compute node using salloc using below command. 
+
+    salloc -N1 -n1
+
+2. Compile the p2.cu code using p2.Makefile using below command. Post compilation you will find p2 binary which needs to be used to run the program. 
+
+    make -f p2.Makefile
+
+3. Run the program using the p2 binary. You need to specify the total number of grids during execution. "./p2 <number of grids>"
+
+    ./p2 10000
+
+4. Generate the plot using the gnuplot command using the plot script. Execute below command to generate the png file. 
+
+    gnuplot -e "filename='fn-{number_of_slices}'" p2.gnu
+
+    //For 10000 grids
+    gnuplot -e "filename='fn-10000'" p2.gnu
+
+5. The gnuplot script generates the png file titled "fn-10000.png"
+
+6. To summarize all the commands in one go, please check below:
+
+
+    salloc -N1 -n1
+    make -f p2.Makefile
+    ./p2 10000
+    gnuplot -e "filename='fn-10000'" p2.gnu 
+
+'''Implementation details and inference
+
+1. The program calculates the integral of atan(x) by parallelizing the calculation of area. First, all the variables needs to compute the area under the graph are compied from host to cuda device. 
+
+2. I calculate the block_size using the number of grid points and number of threads per block. In this case I have used number of threads to be 32. This number is a variable and can be modified. 
+
+3. Function "compute_area" is a gpu function which sums up the value of atanx(x) for each grid point. This happens parallely, where each thread of a block computes the value of the function. 
+
+4. There are appropriate checks "if (i >= 2 && i <= *NGRID)" to handle index out of bound errors for the thread index. 
+
+5. The cpu function "main" aggregates all the values of the function in the array inf. 
+
+6. Computed results are dumped into a file and program frees all the host and device allocated memory. 
+
+Inference --> With increase in the number of grid points, the integral curve smoothens out. 
+
