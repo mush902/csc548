@@ -1,3 +1,6 @@
+// Single Author info:
+// mshaikh2 Mushtaq Ahmed Shaikh
+
 CC := nvcc
 CFLAGS := -O3 -lm -Wno-deprecated-gpu-targets -I$(CUDA_HOME)/include
 LDFLAGS := -L$(CUDA_HOME)/lib64
